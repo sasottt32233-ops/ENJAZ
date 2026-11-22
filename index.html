@@ -35,6 +35,11 @@ header{display:grid!important;grid-template-columns:auto 1fr auto;gap:18px;align
 .bgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}.bd{text-align:center;padding:14px 8px;border-radius:18px;border:1px solid var(--line);background:linear-gradient(160deg,#C9A45C22,transparent)}.bd .ic{width:70px;height:70px;margin:0 auto 6px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.1em;background:radial-gradient(circle at 30% 30%,#f3dba0,#C9A45C);box-shadow:0 0 0 4px #C9A45C44,0 6px 16px #c9a45c77}.bd.lk{filter:grayscale(1);opacity:.55}.bd.lk .ic{box-shadow:none}
 .ai{display:flex;gap:12px;align-items:center;padding:10px;border-radius:14px;border:1px solid var(--line);margin-bottom:8px;border-right:5px solid var(--gold)}.ai .ic{font-size:1.8em}.ai .t{flex:1;min-width:140px}
 @media(max-width:850px){header{grid-template-columns:1fr auto;gap:8px;padding:10px 14px!important}#hq{grid-column:1/-1;order:3;font-size:1em}#avw,#av{width:64px;height:64px}#avp{font-size:1.8em}}
+header{grid-template-columns:auto 1fr auto auto!important}#hg{text-align:center;color:var(--cream)}.gz small{display:block;font-size:.72em;opacity:.85}.gb{width:110px}.gb b{color:var(--gold)}
+.selchip{flex:1 1 100%;text-align:left}#selbar.card{position:sticky;top:56px;z-index:8;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+details.mo{flex-basis:auto}.mo summary{list-style:none;cursor:pointer;border:1px solid var(--gold);border-radius:10px;padding:5px 12px}.mo summary::-webkit-details-marker{display:none}.mo[open]{flex:1 1 100%}.mo>div{display:flex;gap:6px;flex-wrap:wrap;padding-top:8px}
+details>summary{cursor:pointer;font-weight:700}
+@media(max-width:850px){header{grid-template-columns:1fr auto auto!important}#hq{grid-column:1/-1;order:5}.card{backdrop-filter:none!important}main>*{animation:none!important}nav button.sec{display:none}nav.open{flex-wrap:wrap;overflow:visible}nav.open button.sec{display:block}}
 </style></head><body>
 <header><div class="hl"><div id="avw"><img id="av" alt=""><span id="avp">🎓</span></div><img id="lg" alt=""><svg id="emb" width="40" height="40" viewBox="0 0 40 40"><path d="M20 2l16 9v18l-16 9L4 29V11z" fill="none" stroke="#C9A45C" stroke-width="2.5"/><path d="M12 21l6 6 11-13" fill="none" stroke="#C9A45C" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b id="app">ENJAZ | إنجاز</b><small id="tag"></small></div></div><div id="hq"></div><div id="hclk"></div></header>
 <nav id="nav"></nav><main id="main">جارٍ التحميل…</main>
@@ -42,25 +47,7 @@ header{display:grid!important;grid-template-columns:auto 1fr auto;gap:18px;align
 /* ---- GitHub Pages mode: when not inside Apps Script, talk to the Web App through fetch ---- */
 (function(){if(typeof google!=='undefined'&&google.script)return;
 var U=localStorage.getItem('enjaz_url'),T=localStorage.getItem('enjaz_token');
-function api(fn,a){
-  if(!U||!T) return Promise.reject(new Error('بيانات الاتصال غير مكتملة. أدخل رابط Web App والرمز السري.'));
-  return fetch(U,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn:fn,args:a,token:T}),redirect:'follow'})
-    .then(function(r){return r.text().then(function(txt){
-      var j;
-      try{j=JSON.parse(txt)}catch(e){
-        throw new Error('استجابة الخادم ليست JSON. تحقق من رابط Web App ومن إعدادات النشر. بداية الاستجابة: '+String(txt).slice(0,140));
-      }
-      if(!r.ok) throw new Error('تعذر الاتصال بالخادم (HTTP '+r.status+').');
-      if(!j.ok) throw new Error(j.error==='Unauthorized'?'الرمز السري غير صحيح':(j.error||'رفض الخادم الطلب'));
-      return j.data;
-    })})
-    .catch(function(e){
-      if(e && (e.name==='TypeError' || /Failed to fetch|NetworkError|Load failed/i.test(e.message||''))){
-        throw new Error('تعذر الوصول إلى Google Apps Script. قد يكون رابط النشر غير صحيح أو أن المتصفح منع الاتصال بين الموقع وGoogle بسبب إعدادات الوصول أو CORS.');
-      }
-      throw e;
-    });
-}
+function api(fn,a){return fetch(U,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn:fn,args:a,token:T}),redirect:'follow'}).then(function(r){return r.json()}).then(function(j){if(!j.ok)throw new Error(j.error==='Unauthorized'?'الرمز السري غير صحيح':j.error);return j.data})}
 function mk(ok,no){return new Proxy({},{get:function(_,k){if(k==='withSuccessHandler')return function(f){return mk(f,no)};if(k==='withFailureHandler')return function(f){return mk(ok,f)};return function(){api(k,[].slice.call(arguments)).then(ok||function(){},no||function(){})}}})}
 window.google={script:{run:mk()}};window.__API=true;
 if(!U||!T){document.addEventListener('DOMContentLoaded',function(){document.getElementById('main').innerHTML='<div class="card" style="max-width:520px;margin:auto"><h3>الاتصال بالتطبيق</h3><label class="fl">رابط Web App<input id="lu" placeholder="https://script.google.com/macros/s/.../exec" dir="ltr"></label><label class="fl">الرمز السري<input id="lt" type="password" dir="ltr"></label><button class="b" onclick="localStorage.setItem(\'enjaz_url\',lu.value.trim());localStorage.setItem(\'enjaz_token\',lt.value.trim());location.reload()">دخول</button><p><small>يُحفظ الرابط والرمز في هذا المتصفح فقط.</small></p></div>'});window.__STOP=true}})();
@@ -68,39 +55,11 @@ if(!U||!T){document.addEventListener('DOMContentLoaded',function(){document.getE
 <script>
 if(window.__STOP)throw 'login';
 
-/* Show a readable diagnostic instead of leaving a blank screen on startup errors. */
-window.addEventListener('error',function(e){
-  console.error('ENJAZ runtime error:',e.error||e.message);
-  var m=document.getElementById('main');
-  if(m && !window.__STOP) m.innerHTML='<div class="card" style="border:1px solid #d64545"><h2 style="color:#d64545">حدث خطأ أثناء تشغيل التطبيق</h2><p>لم يتم حذف بياناتك. أعد تحميل الصفحة، وإذا تكرر الخطأ أرسل نص الخطأ من وحدة التحكم.</p><small>'+String(e.message||'خطأ JavaScript').replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]})+'</small><p><button class="b" onclick="location.reload()">إعادة تحميل</button></p></div>';
-});
-window.addEventListener('unhandledrejection',function(e){
-  console.error('ENJAZ async error:',e.reason);
-});
-
 var S,tab='cmd',PR={high:'عالية',med:'متوسطة',low:'منخفضة'},ST={New:'جديدة','In Progress':'قيد التنفيذ',Completed:'مكتملة',Deferred:'مؤجلة',Cancelled:'ملغاة'};
 var TABS={cmd:'مركز القيادة',tasks:'المهام',proj:'المشاريع',plan:'الجدول',ach:'الإنجازات',set:'الإعدادات'};
 function run(fn){var a=[].slice.call(arguments,1);return new Promise(function(ok,no){var r=google.script.run.withSuccessHandler(ok).withFailureHandler(function(e){alert(e.message||e);no(e)});r[fn].apply(r,a)})}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
-function load(){
-  var m=document.getElementById('main');
-  if(m) m.innerHTML='<div class="card" role="status">جارٍ الاتصال بالخادم وتحميل بيانات إنجاز…</div>';
-  return run('getState').then(function(s){
-    if(!s || !s.settings || !Array.isArray(s.tasks)) throw new Error('وصلت استجابة غير مكتملة من الخادم. تأكد من أن دالة getState تُرجع حالة التطبيق كاملة.');
-    S=s; theme(); render(); return s;
-  }).catch(function(e){
-    console.error('ENJAZ startup/load error:',e);
-    var msg=(e&&e.message)?e.message:String(e||'خطأ غير معروف');
-    if(m) m.innerHTML='<div class="card" style="max-width:760px;margin:24px auto;border:1px solid #d64545">'
-      +'<h2 style="color:#d64545">تعذر تحميل التطبيق</h2>'
-      +'<p>لم تُحذف بياناتك. تعذر فقط تحميل الواجهة من الخادم.</p>'
-      +'<p><b>سبب المشكلة المحتمل:</b> '+esc(msg)+'</p>'
-      +'<div class="row"><button class="b" onclick="load()">إعادة المحاولة</button>'
-      +'<button class="s b" onclick="localStorage.removeItem(\'enjaz_url\');localStorage.removeItem(\'enjaz_token\');location.reload()">إعادة إدخال بيانات الاتصال</button></div>'
-      +'<small>إذا استمرت المشكلة، راجع رابط النشر الذي ينتهي بـ /exec، وتأكد أن التطبيق منشور ويعمل بالحساب الصحيح.</small></div>';
-    return null;
-  });
-}
+function load(){return run('getState').then(function(s){S=s;theme();render()})}
 function theme(){var r=document.documentElement.style,t=S.settings;r.setProperty('--navy',t.navy);r.setProperty('--gold',t.gold);r.setProperty('--cream',t.cream);
 document.body.style.fontFamily=t.font+',Tahoma,sans-serif';document.body.style.fontSize=t.fontSize+'px';document.body.className=t.theme==='dark'?'dark':'';
 app.textContent=t.appName;tag.textContent=t.tagline}
@@ -472,7 +431,7 @@ return'<div class="card"><h3>الملخص الشامل للفترة ('+RF+' ← 
 '<div class="card" style="overflow-x:auto"><h3>حسب المشروع</h3><table><tr><th>المشروع</th><th>التقدم</th><th>مهام منجزة</th><th>مواعيد</th><th>دقائق</th><th>نقاط</th><th>محتوى</th><th>الهدف</th></tr>'+R.map(function(r){return'<tr>'+r.map(function(c){return'<td>'+esc(c)+'</td>'}).join('')+'</tr>'}).join('')+'</table><p><button class="s b" onclick="dlCsv([[\'المشروع\',\'التقدم\',\'مهام منجزة\',\'مواعيد\',\'دقائق\',\'نقاط\',\'محتوى\',\'الهدف\']].concat(ovRows()),\'enjaz-overview.csv\')">تصدير الملخص CSV</button></p></div>'}
 var _vr9=V.rep;V.rep=function(){return overview()+_vr9()};
 if(S){theme();render()}
-var _vct=V.ctl;V.ctl=function(){var x=_vct();return x+(window.__API&&CT===3?'<div class="card"><h3>الاتصال</h3><button class="s b" onclick="if(confirm(\'تسجيل الخروج من هذا المتصفح؟\')){localStorage.removeItem(\'enjaz_url\');localStorage.removeItem(\'enjaz_token\');location.reload()}">تسجيل الخروج / تغيير الرمز</button></div>':'')};
+var _vct=V.ctl;V.ctl=function(){var x=_vct();return x+(window.__API&&CT===3?'<div class="card"><h3>الاتصال</h3><button class="s b" onclick="if(confirm(\'تسجيل الخروج من هذا المتصفح؟\')){localStorage.removeItem(\'enjaz_url\');localStorage.removeItem(\'enjaz_token\');localStorage.removeItem(\'enjaz_cache\');location.reload()}">تسجيل الخروج / تغيير الرمز</button></div>':'')};
 if(S){theme();render()}
 /* ===== Part 11: executive assistant, finance, knowledge hub, decisions, health ===== */
 Object.assign(TABS,{brief:'🧭 المساعد التنفيذي',fin:'💰 المالية',kb:'📚 المعرفة والقرارات',health:'🩺 النظام والنسخ'});
@@ -537,7 +496,38 @@ function rdb(id){if(!confirm('ستُستبدل بياناتك الحالية ب�
 V.health=function(){setTimeout(hFill,0);return'<div class="card" id="hb">جارٍ الفحص…</div><div class="card" id="hd">جارٍ التحميل…</div>'};
 var _vc11=V.cmd;V.cmd=function(){return _vc11()+'<div class="card"><h3>إجراءات سريعة</h3><button class="b" onclick="editTask()">+ مهمة</button> <button class="b" onclick="editProj()">+ مشروع</button> <button class="b" onclick="editNote(null,\'idea\')">+ فكرة</button> <button class="b" onclick="editFin(\'expense\')">+ مصروف</button> <button class="b" onclick="editDec()">+ قرار</button></div>'};
 if(S){theme();render()}
-</script><script>
+/* ===== Part 12: speed, daily gauge, bulk select, calmer layout ===== */
+var IMG=null,_r12=run;
+run=function(fn){if(['saveImage','removeImage','restoreDefaultUI','resetAllData','restoreBackup','restoreDriveBackup'].indexOf(fn)>-1)IMG=null;return _r12.apply(null,arguments)};
+function imgOf(s){var o={};Object.keys(s).forEach(function(k){if(k.indexOf('img_')===0)o[k]=s[k]});return o}
+function cacheSave(s){try{var c=Object.assign({},s);c.settings={};Object.keys(s.settings).forEach(function(k){if(k.indexOf('img_')!==0)c.settings[k]=s.settings[k]});localStorage.setItem('enjaz_cache',JSON.stringify(c))}catch(e){}}
+load=function(){var first=!IMG;return run('getState',!first).then(function(s){if(first)IMG=imgOf(s.settings);else Object.assign(s.settings,IMG);cacheSave(s);S=s;theme();render()})};
+function dayRate(){var d=0,r=0;S.tasks.forEach(function(t){if(t.status==='Completed'&&t.doneDate===S.today)d++;else if(open_(t)&&t.curDue<=S.today)r++});return{d:d,t:d+r,p:d+r?Math.round(d/(d+r)*100):0}}
+function gauge(){var g=J('ui_gauge',{}),el=document.getElementById('hg');if(!el){el=document.createElement('div');el.id='hg';document.querySelector('header').insertBefore(el,document.getElementById('hclk'))}
+if(g.show===false){el.innerHTML='';return}var r=dayRate(),c=r.p>=80?'#4a9d6b':r.p>=40?'#C9A45C':'#d64545',st=g.style||'ring',o;
+if(st==='bar')o='<div class="gb"><div class="bar"><i style="width:'+r.p+'%;background:'+c+'"></i></div><b>'+r.p+'%</b></div>';
+else if(st==='half'){var L=Math.PI*40,f=L*r.p/100;o='<svg width="96" height="58" viewBox="0 0 100 60"><path d="M10 52A40 40 0 0 1 90 52" fill="none" stroke="#ffffff30" stroke-width="9" stroke-linecap="round"/><path d="M10 52A40 40 0 0 1 90 52" fill="none" stroke="'+c+'" stroke-width="9" stroke-linecap="round" stroke-dasharray="'+f+' '+L+'"/><text x="50" y="50" text-anchor="middle" fill="#F7F2E8" font-size="20" font-weight="700">'+r.p+'%</text></svg>'}
+else o='<svg width="68" height="68" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="#ffffff30" stroke-width="10"/><circle cx="50" cy="50" r="40" fill="none" stroke="'+c+'" stroke-width="10" stroke-linecap="round" stroke-dasharray="'+2.513*r.p+' 251.3" transform="rotate(-90 50 50)"/><text x="50" y="58" text-anchor="middle" fill="#F7F2E8" font-size="26" font-weight="700">'+r.p+'%</text></svg>';
+el.innerHTML='<div class="gz">'+o+'<small>إنجاز اليوم '+r.d+'/'+r.t+'</small></div>'}
+function gset(k,v){var g=J('ui_gauge',{});g[k]=v;saveNow('ui_gauge',g)}
+var _ac12=appCard;appCard=function(){var g=J('ui_gauge',{}),o={ring:'عجلة',half:'نصف دائرة',bar:'شريط'};return _ac12()+'<div class="card"><h3>مؤشر الإنجاز اليومي</h3><select onchange="gset(\'style\',this.value)">'+Object.keys(o).map(function(k){return'<option value="'+k+'"'+((g.style||'ring')===k?' selected':'')+'>'+o[k]+'</option>'}).join('')+'</select> <label><input type="checkbox" '+(g.show===false?'':'checked')+' onchange="gset(\'show\',this.checked)"> إظهار في أعلى الشاشة</label></div>'};
+var _tr12=taskRow;taskRow=function(t){var h=_tr12(t),m=h.match(/^(<div class="row[^>]*>)(<div class="t">[\s\S]*?<\/div>)([\s\S]*)<\/div>$/);if(!m)return h;var B=m[3].match(/<button[\s\S]*?<\/button>/g)||[],p=[],s=[];B.forEach(function(b){(/go\('(start|done)'/.test(b)?p:s).push(b)});return m[1]+m[2]+p.join('')+(s.length?'<details class="mo"><summary>⋯</summary><div>'+s.join('')+'</div></details>':'')+'</div>'};
+var SM={},SEL={},SELT={proj:1,tasks:1,ach:1,fin:1,kb:1,con:1},SRX=/edit(Task|Ach|Proj|Fin|Note|Content|Dec)\((?:[^'()]*,)?'(\w+)'\)/,STP={Task:'tasks',Ach:'ach',Proj:'projects',Fin:'fin',Note:'notes',Content:'content',Dec:'decisions'};
+function selCount(){var e=document.getElementById('selc');if(e)e.textContent=Object.keys(SEL).length}
+function selDom(){if(!SELT[tab])return;var on=!!SM[tab];
+if(on)[].slice.call(main.querySelectorAll(tab==='ach'?'.ai':tab==='proj'?'.pg>.card':'.row')).forEach(function(e){var m=SRX.exec(e.innerHTML);if(!m)return;var k=STP[m[1]]+':'+m[2],cb=document.createElement('input');cb.type='checkbox';cb.className='selcb';cb.checked=!!SEL[k];cb.style.cssText='width:22px;height:22px';cb.onchange=function(){if(cb.checked)SEL[k]=1;else delete SEL[k];selCount()};e.insertBefore(cb,e.firstChild)});
+var bar=document.createElement('div');bar.id='selbar';bar.className=on?'card':'selchip';
+bar.innerHTML=on?'<b id="selc">0</b> محدد <button class="b d" onclick="bulkGo()">حذف المحدد</button> <button class="s b" onclick="selAllDom()">تحديد الكل</button> <button class="s b" onclick="SM[tab]=false;SEL={};render()">إنهاء</button>':'<button class="s b" onclick="SM[tab]=true;SEL={};render()">☑ تحديد متعدد</button>';main.insertBefore(bar,main.firstChild);selCount()}
+function selAllDom(){[].slice.call(main.querySelectorAll('.selcb')).forEach(function(cb){if(!cb.checked){cb.checked=true;cb.onchange()}})}
+function bulkGo(){var G={},n=Object.keys(SEL).length;Object.keys(SEL).forEach(function(k){var a=k.split(':');(G[a[0]]=G[a[0]]||[]).push(a[1])});if(!n)return alert('لم تحدد شيئًا');if(!confirm('حذف '+n+' عنصر نهائيًا؟'))return;var o={};
+if(G.tasks)o.withAch=confirm('حذف الإنجازات والنقاط المرتبطة بالمهام المحددة أيضًا؟\nموافق = تُحذف\nإلغاء = تبقى');if(G.projects){o.withTasks=confirm('حذف مهام المشاريع المحددة أيضًا؟\nإلغاء = تبقى بلا مشروع');o.withAch=o.withAch||confirm('حذف إنجازات المشاريع المحددة ونقاطها؟')}
+Promise.all(Object.keys(G).map(function(t){return run('bulkDelete',t,G[t],o)})).then(function(){SEL={};SM[tab]=false;load()},function(){load()})}
+function collapseCmd(){if(tab!=='cmd')return;var C=['المرحّلة من أيام سابقة','مواعيد قادمة اليوم','تقدم المشاريع'];[].slice.call(main.children).forEach(function(e){var h=e.querySelector('h3');if(!h||!C.some(function(c){return h.textContent.indexOf(c)===0}))return;var d=document.createElement('details'),s=document.createElement('summary');s.textContent=h.textContent;h.remove();d.appendChild(s);while(e.firstChild)d.appendChild(e.firstChild);e.appendChild(d)})}
+function navCompact(){nav.classList.remove('open');if(!matchMedia('(max-width:850px)').matches)return;var P=['cmd','tasks','proj','plan','ach','ctl'];[].slice.call(nav.children).forEach(function(b){var k=((b.getAttribute('onclick')||'').match(/tab='(\w+)'/)||[])[1];if(P.indexOf(k)<0&&k!==tab)b.classList.add('sec')});var m=document.createElement('button');m.textContent='☰ المزيد';m.onclick=function(){nav.classList.toggle('open')};nav.appendChild(m)}
+var _r13=render;render=function(){_r13();navCompact();gauge();collapseCmd();selDom();cacheSave(S)};
+if(!S){try{var cc=JSON.parse(localStorage.getItem('enjaz_cache')||'null');if(cc&&cc.settings){S=cc;theme();render()}}catch(e){}}else{gauge()}
+</script>
+<script>
 /* PWA: active only on the GitHub Pages host (inside Apps Script, window.__API is undefined) */
 (function(){if(!window.__API)return;
 var off=document.createElement('div');off.style.cssText='position:fixed;top:0;left:0;right:0;z-index:99;background:#b3261e;color:#fff;text-align:center;padding:6px;font:14px Tahoma;display:none';off.textContent='⚠ لا يوجد اتصال بالإنترنت — لن تُحفظ التغييرات حتى يعود الاتصال';document.body.appendChild(off);
