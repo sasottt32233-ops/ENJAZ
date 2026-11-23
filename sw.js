@@ -1,5 +1,5 @@
 /* ENJAZ service worker. Bump VERSION on each release. */
-const VERSION = 'enjaz-v2';
+const VERSION = 'enjaz-v3';
 const SHELL = VERSION + '-shell', RUNTIME = VERSION + '-rt';
 const PRECACHE = ['./', './index.html', './offline.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
 const CDN = ['fonts.googleapis.com', 'fonts.gstatic.com', 'cdn.jsdelivr.net']; // public static assets only
