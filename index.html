@@ -528,7 +528,8 @@ var _r13=render;render=function(){_r13();navCompact();gauge();collapseCmd();selD
 if(!S){try{var cc=JSON.parse(localStorage.getItem('enjaz_cache')||'null');if(cc&&cc.settings){S=cc;theme();render()}}catch(e){}}else{gauge()}
 /* ===== Part 13: automatic silent refresh (picks up changes made elsewhere: computer, Sheets) ===== */
 var RF_BUSY=false,RF_LAST=Date.now();
-function silentLoad(cb){google.script.run.withSuccessHandler(function(s){if(!IMG)IMG=imgOf(s.settings);else Object.assign(s.settings,IMG);cacheSave(s);S=s;theme();render();cb()}).withFailureHandler(function(){cb()}).getState(!!IMG)}
+function syncErr(m){var e=document.getElementById('syncerr');if(!m){if(e)e.remove();return}if(!e){e=document.createElement('div');e.id='syncerr';e.style.cssText='position:fixed;bottom:0;left:0;right:0;z-index:98;background:#b3261e;color:#fff;text-align:center;padding:6px;font:14px Tahoma';document.body.appendChild(e)}e.textContent='⚠ تعذّر التحديث من الخادم: '+m+' — البيانات المعروضة قد تكون قديمة'}
+function silentLoad(cb){google.script.run.withSuccessHandler(function(s){syncErr('');if(!IMG)IMG=imgOf(s.settings);else Object.assign(s.settings,IMG);cacheSave(s);S=s;theme();render();cb()}).withFailureHandler(function(e){syncErr((e&&e.message)||'خطأ في الاتصال');cb()}).getState(!!IMG)}
 function autoRefresh(force){if(RF_BUSY||document.hidden||!S)return;if(!force&&Date.now()-RF_LAST<45000)return;var a=document.activeElement;
 if(document.querySelector('.ov')||SM[tab]||(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)))return;RF_BUSY=true;silentLoad(function(){RF_BUSY=false;RF_LAST=Date.now()})}
 setInterval(function(){autoRefresh(false)},60000);
