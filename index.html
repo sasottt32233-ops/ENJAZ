@@ -526,6 +526,14 @@ function collapseCmd(){if(tab!=='cmd')return;var C=['المرحّلة من أي�
 function navCompact(){nav.classList.remove('open');if(!matchMedia('(max-width:850px)').matches)return;var P=['cmd','tasks','proj','plan','ach','ctl'];[].slice.call(nav.children).forEach(function(b){var k=((b.getAttribute('onclick')||'').match(/tab='(\w+)'/)||[])[1];if(P.indexOf(k)<0&&k!==tab)b.classList.add('sec')});var m=document.createElement('button');m.textContent='☰ المزيد';m.onclick=function(){nav.classList.toggle('open')};nav.appendChild(m)}
 var _r13=render;render=function(){_r13();navCompact();gauge();collapseCmd();selDom();cacheSave(S)};
 if(!S){try{var cc=JSON.parse(localStorage.getItem('enjaz_cache')||'null');if(cc&&cc.settings){S=cc;theme();render()}}catch(e){}}else{gauge()}
+/* ===== Part 13: automatic silent refresh (picks up changes made elsewhere: computer, Sheets) ===== */
+var RF_BUSY=false,RF_LAST=Date.now();
+function silentLoad(cb){google.script.run.withSuccessHandler(function(s){if(!IMG)IMG=imgOf(s.settings);else Object.assign(s.settings,IMG);cacheSave(s);S=s;theme();render();cb()}).withFailureHandler(function(){cb()}).getState(!!IMG)}
+function autoRefresh(force){if(RF_BUSY||document.hidden||!S)return;if(!force&&Date.now()-RF_LAST<45000)return;var a=document.activeElement;
+if(document.querySelector('.ov')||SM[tab]||(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)))return;RF_BUSY=true;silentLoad(function(){RF_BUSY=false;RF_LAST=Date.now()})}
+setInterval(function(){autoRefresh(false)},60000);
+document.addEventListener('visibilitychange',function(){if(!document.hidden)autoRefresh(true)});
+addEventListener('online',function(){autoRefresh(true)});
 </script>
 <script>
 /* PWA: active only on the GitHub Pages host (inside Apps Script, window.__API is undefined) */
